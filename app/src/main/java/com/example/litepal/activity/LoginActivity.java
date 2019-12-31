@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.litepal.LitePal;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +25,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // 全局变量
     private MyApplication app;
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            exit();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +48,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void initView() {
         Button login = findViewById(R.id.login);
         Button register = findViewById(R.id.register);
+        Button exit = findViewById(R.id.exit);
 
         login.setOnClickListener(this);
         register.setOnClickListener(this);
+        exit.setOnClickListener(this);
         // 获取全局变量
         app = (MyApplication) getApplication();
     }
@@ -62,9 +75,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // 注册操作
                 register();
                 break;
+            case R.id.exit:
+                // 退出操作
+                exit();
             default:
                 break;
         }
+    }
+
+    /**
+     * 退出操作
+     */
+    private void exit() {
+        // 设置对话提示框
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setTitle("警告");
+        builder.setMessage("你确定要退出吗");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     /**
